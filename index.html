@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="FONAVANZAR — Fondo de Empleados. Ahorro, créditos, convenios y bienestar. Más que un fondo somos una gran familia." />
+  <meta name="theme-color" content="#0060B0" />
+  <meta name="keywords" content="fondo de empleados, ahorro, créditos, convenios, subsidios, bienestar laboral, Colombia" />
+  <meta property="og:title" content="FONAVANZAR | Más que un fondo, una gran familia" />
+  <meta property="og:description" content="Ahorro, créditos, convenios y programas de bienestar para nuestros afiliados." />
+  <meta property="og:image" content="./images/logo.png" />
+  <meta property="og:type" content="website" />
+  <link rel="icon" type="image/png" href="./images/logo.png" />
+  <title>FONAVANZAR | Fondo de Empleados</title>
+
+  <!-- Fonts (local) -->
+  <link rel="stylesheet" href="./fonts/google-fonts.css" />
+
+  <!-- Tailwind CSS (local) -->
+  <script src="./js/tailwindcss.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            fona: {
+              blue: '#0060B0',
+              blue2: '#2E86C1',
+              navy: '#0A1A3C',
+              red: '#D00010',
+              red2: '#E63946',
+              light: '#F0F6FB',
+              lighter: '#F8FBFE',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Montserrat', 'sans-serif'],
+          },
+          animation: {
+            'float': 'float 6s ease-in-out infinite',
+            'float-slow': 'float 8s ease-in-out infinite',
+            'blob': 'blob 12s ease-in-out infinite',
+            'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-16px)' },
+            },
+            blob: {
+              '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
+              '33%': { transform: 'translate(24px, -32px) scale(1.08)' },
+              '66%': { transform: 'translate(-16px, 16px) scale(0.94)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons (local) -->
+  <script src="./js/lucide.min.js"></script>
+
+  <link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body class="bg-fona-light text-fona-navy antialiased overflow-x-hidden">
+  <!-- Dynamic colorful background -->
+  <canvas id="bubbles-canvas" class="fixed inset-0 w-full h-full pointer-events-none z-0"></canvas>
+
+  <!-- Navigation -->
+  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white/80 backdrop-blur-xl border-b border-fona-blue/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        <a href="#" class="flex items-center gap-3 group">
+          <img src="./images/logo.png" alt="FONAVANZAR" class="h-12 w-auto group-hover:scale-105 transition-transform duration-300" />
+        </a>
+
+        <div class="hidden lg:flex items-center gap-7">
+          <a href="#quienes-somos" class="text-sm font-medium text-fona-navy/70 hover:text-fona-blue transition-colors">Quiénes somos</a>
+          <a href="#servicios" class="text-sm font-medium text-fona-navy/70 hover:text-fona-blue transition-colors">Servicios</a>
+          <a href="#simulador" class="text-sm font-medium text-fona-navy/70 hover:text-fona-blue transition-colors">Simulador</a>
+          <a href="#convenios" class="text-sm font-medium text-fona-navy/70 hover:text-fona-blue transition-colors">Convenios</a>
+          <a href="#contacto" class="text-sm font-medium text-fona-navy/70 hover:text-fona-blue transition-colors">Contacto</a>
+        </div>
+
+        <div class="hidden lg:flex items-center gap-4">
+          <a href="tel:+573017925683" class="flex items-center gap-2 text-sm font-medium text-fona-navy/70 hover:text-fona-blue transition-colors">
+            <i data-lucide="phone-call" class="w-4 h-4 text-fona-red"></i>
+            <span>301 792 5683</span>
+          </a>
+          <a href="#simulador" class="px-5 py-2.5 rounded-full bg-gradient-to-r from-fona-blue to-fona-blue2 text-white font-semibold text-sm hover:shadow-lg hover:shadow-fona-blue/30 transition-all hover:-translate-y-0.5">
+            Simula tu crédito
+          </a>
+        </div>
+
+        <button id="mobile-menu-btn" class="lg:hidden p-2 rounded-lg hover:bg-fona-blue/10 transition-colors text-fona-navy">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="lg:hidden hidden bg-white/95 backdrop-blur-xl border-t border-fona-blue/10">
+      <div class="px-4 py-6 space-y-4">
+        <a href="#quienes-somos" class="block text-base font-medium text-fona-navy/80 hover:text-fona-blue">Quiénes somos</a>
+        <a href="#servicios" class="block text-base font-medium text-fona-navy/80 hover:text-fona-blue">Servicios</a>
+        <a href="#simulador" class="block text-base font-medium text-fona-navy/80 hover:text-fona-blue">Simulador</a>
+        <a href="#convenios" class="block text-base font-medium text-fona-navy/80 hover:text-fona-blue">Convenios</a>
+        <a href="#contacto" class="block text-base font-medium text-fona-navy/80 hover:text-fona-blue">Contacto</a>
+        <a href="#simulador" class="inline-block mt-4 px-6 py-3 rounded-full bg-gradient-to-r from-fona-blue to-fona-blue2 text-white font-semibold">Simula tu crédito</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="relative z-10 min-h-screen flex items-center pt-20">
+    <!-- Animated blobs -->
+    <div class="absolute top-24 -left-24 w-96 h-96 bg-fona-blue/20 rounded-full blur-3xl animate-blob pointer-events-none"></div>
+    <div class="absolute top-1/3 -right-24 w-96 h-96 bg-fona-red/15 rounded-full blur-3xl animate-blob pointer-events-none" style="animation-delay:-4s"></div>
+    <div class="absolute bottom-10 left-1/3 w-72 h-72 bg-fona-blue2/20 rounded-full blur-3xl animate-blob pointer-events-none" style="animation-delay:-8s"></div>
+
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
+      <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div class="space-y-8 reveal-on-scroll">
+          <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-fona-blue/10 border border-fona-blue/20 text-fona-blue text-xs sm:text-sm font-semibold max-w-full">
+            <span class="relative flex h-2 w-2 flex-shrink-0">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-fona-red opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-fona-red"></span>
+            </span>
+            <span class="whitespace-normal">Fondo de Empleados — Tu gran familia</span>
+          </div>
+
+          <h1 class="font-display font-black text-4xl sm:text-5xl lg:text-6xl leading-[1.08]">
+            Más que un fondo, <span class="text-transparent bg-clip-text bg-gradient-to-r from-fona-blue via-fona-blue2 to-fona-red">somos una gran familia</span>
+          </h1>
+
+          <p class="text-lg sm:text-xl text-fona-navy/70 max-w-xl leading-relaxed">
+            En <strong class="text-fona-navy">FONAVANZAR</strong> cuidamos tu bienestar con <strong class="text-fona-navy">ahorro, créditos de libranza, convenios exclusivos</strong> y programas que hacen tu día a día más ligero.
+          </p>
+
+          <div class="flex flex-col sm:flex-row gap-4">
+            <a href="#simulador" class="group px-8 py-4 rounded-full bg-gradient-to-r from-fona-blue to-fona-blue2 text-white font-bold text-center hover:shadow-xl hover:shadow-fona-blue/30 transition-all hover:-translate-y-1 flex items-center justify-center gap-2">
+              <span>Simula tu crédito</span>
+              <i data-lucide="calculator" class="w-5 h-5 group-hover:rotate-6 transition-transform"></i>
+            </a>
+            <a href="#servicios" class="px-8 py-4 rounded-full border-2 border-fona-blue/30 text-fona-blue font-semibold text-center hover:bg-fona-blue/5 transition-all flex items-center justify-center gap-2">
+              <span>Conoce los beneficios</span>
+              <i data-lucide="chevron-down" class="w-5 h-5"></i>
+            </a>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-6 pt-4">
+            <div class="flex items-center gap-2 text-sm text-fona-navy/60">
+              <i data-lucide="check-circle-2" class="w-5 h-5 text-fona-blue"></i>
+              <span>Afiliación sin costo</span>
+            </div>
+            <div class="flex items-center gap-2 text-sm text-fona-navy/60">
+              <i data-lucide="check-circle-2" class="w-5 h-5 text-fona-blue"></i>
+              <span>Respuesta en 24h</span>
+            </div>
+            <div class="flex items-center gap-2 text-sm text-fona-navy/60">
+              <i data-lucide="check-circle-2" class="w-5 h-5 text-fona-blue"></i>
+              <span>Descuentos exclusivos</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hero visual: credit card + floating elements -->
+        <div class="relative reveal-on-scroll lg:pl-8">
+          <div class="relative max-w-md mx-auto">
+            <!-- Credit card -->
+            <div class="relative rounded-3xl p-8 text-white shadow-2xl shadow-fona-blue/30 bg-gradient-to-br from-fona-navy via-fona-blue to-fona-blue2 rotate-2 hover:rotate-0 transition-transform duration-500 animate-float-slow overflow-hidden">
+              <div class="absolute -top-16 -right-16 w-56 h-56 bg-white/10 rounded-full"></div>
+              <div class="absolute -bottom-20 -left-10 w-56 h-56 bg-fona-red/30 rounded-full"></div>
+              <div class="relative">
+                <div class="flex justify-between items-start mb-8">
+                  <img src="./images/logo.png" alt="FONAVANZAR" class="h-10 w-auto brightness-0 invert" />
+                  <i data-lucide="wifi" class="w-7 h-7 rotate-90 opacity-80"></i>
+                </div>
+                <p class="font-mono text-xl tracking-[0.2em] mb-6">**** **** **** 2024</p>
+                <div class="flex justify-between items-end">
+                  <div>
+                    <p class="text-[10px] uppercase tracking-widest opacity-70">Afiliado</p>
+                    <p class="font-semibold">TU NOMBRE</p>
+                  </div>
+                  <div class="w-12 h-8 rounded bg-gradient-to-br from-fona-red2 to-fona-red flex items-center justify-center">
+                    <span class="text-[9px] font-bold">FNV</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Floating badges -->
+            <div class="absolute -top-6 -right-2 glass-card-light rounded-2xl p-4 animate-float shadow-xl shadow-fona-navy/10">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-fona-blue/15 flex items-center justify-center">
+                  <i data-lucide="piggy-bank" class="w-5 h-5 text-fona-blue"></i>
+                </div>
+                <div>
+                  <p class="text-xs text-fona-navy/60">Tu ahorro crece</p>
+                  <p class="font-display font-bold text-fona-navy">cada mes</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="absolute -bottom-6 -left-2 glass-card-light rounded-2xl p-4 animate-float shadow-xl shadow-fona-navy/10" style="animation-delay:-3s">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-fona-red/15 flex items-center justify-center">
+                  <i data-lucide="percent" class="w-5 h-5 text-fona-red"></i>
+                </div>
+                <div>
+                  <p class="text-xs text-fona-navy/60">Créditos con</p>
+                  <p class="font-display font-bold text-fona-navy">tasas preferentes</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Benefits marquee -->
+  <div class="marquee relative z-10 py-5 bg-gradient-to-r from-fona-navy via-fona-blue to-fona-navy text-white">
+    <div class="marquee-track font-display font-bold text-base sm:text-lg uppercase tracking-wide">
+      <div class="flex">
+        <span class="marquee-item"><span class="marquee-dot-light"></span> Ahorro con rendimientos</span>
+        <span class="marquee-item"><span class="marquee-dot-light"></span> Créditos de libranza</span>
+        <span class="marquee-item"><span class="marquee-dot-light"></span> Convenios gastronómicos</span>
+        <span class="marquee-item"><span class="marquee-dot-light"></span> Subsidio de cafetería</span>
+        <span class="marquee-item"><span class="marquee-dot-light"></span> Turismo y bienestar</span>
+        <span class="marquee-item"><span class="marquee-dot-light"></span> Salud y deporte</span>
+      </div>
+      <div class="flex" aria-hidden="true">
+        <span class="marquee-item"><span class="marquee-dot-light"></span> Ahorro con rendimientos</span>
+        <span class="marquee-item"><span class="marquee-dot-light"></span> Créditos de libranza</span>
+        <span class="marquee-item"><span class="marquee-dot-light"></span> Convenios gastronómicos</span>
+        <span class="marquee-item"><span class="marquee-dot-light"></span> Subsidio de cafetería</span>
+        <span class="marquee-item"><span class="marquee-dot-light"></span> Turismo y bienestar</span>
+        <span class="marquee-item"><span class="marquee-dot-light"></span> Salud y deporte</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Section -->
+  <section class="relative z-10 py-16 bg-white border-y border-fona-blue/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="text-center reveal-on-scroll">
+          <p class="font-display font-black text-4xl sm:text-5xl text-fona-blue counter" data-count="2500" data-suffix="+">2.500+</p>
+          <p class="text-fona-navy/60 mt-2">Afiliados felices</p>
+        </div>
+        <div class="text-center reveal-on-scroll">
+          <p class="font-display font-black text-4xl sm:text-5xl text-fona-red counter" data-count="120">120</p>
+          <p class="text-fona-navy/60 mt-2">Convenios activos</p>
+        </div>
+        <div class="text-center reveal-on-scroll">
+          <p class="font-display font-black text-4xl sm:text-5xl text-fona-blue counter" data-count="18">18</p>
+          <p class="text-fona-navy/60 mt-2">Años de trayectoria</p>
+        </div>
+        <div class="text-center reveal-on-scroll">
+          <p class="font-display font-black text-4xl sm:text-5xl text-fona-red counter" data-count="97" data-suffix="%">97%</p>
+          <p class="text-fona-navy/60 mt-2">% satisfacción</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="quienes-somos" class="relative z-10 py-24 lg:py-32">
+    <div class="absolute top-20 right-0 w-80 h-80 bg-fona-blue/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+        <div class="reveal-on-scroll">
+          <span class="text-fona-red font-semibold text-sm uppercase tracking-wider">Quiénes somos</span>
+          <h2 class="font-display font-black text-3xl sm:text-4xl lg:text-5xl mt-4 mb-6 leading-tight">
+            Un fondo que <span class="text-transparent bg-clip-text bg-gradient-to-r from-fona-blue to-fona-red">avanza contigo</span>
+          </h2>
+          <p class="text-fona-navy/70 text-lg mb-8 leading-relaxed">
+            <strong class="text-fona-navy">FONAVANZAR</strong> nace para acompañar a los empleados de nuestra organización aliada en cada etapa de su vida: desde el primer ahorro hasta el crédito para hacer realidad los proyectos soñados.
+          </p>
+          <p class="text-fona-navy/70 text-lg mb-8 leading-relaxed">
+            Somos una entidad sin ánimo de lucro donde <strong class="text-fona-navy">tú eres el protagonista</strong>: tus aportes se convierten en beneficios directos para ti y tu familia.
+          </p>
+
+          <div class="space-y-5">
+            <div class="flex items-start gap-4">
+              <div class="w-11 h-11 rounded-xl bg-fona-blue/10 flex items-center justify-center flex-shrink-0">
+                <i data-lucide="heart-handshake" class="w-5 h-5 text-fona-blue"></i>
+              </div>
+              <div>
+                <h4 class="font-semibold text-fona-navy">Compromiso real</h4>
+                <p class="text-sm text-fona-navy/60">Decisiones transparentes y participativas. Los afiliados son nuestra razón de ser.</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="w-11 h-11 rounded-xl bg-fona-red/10 flex items-center justify-center flex-shrink-0">
+                <i data-lucide="trending-up" class="w-5 h-5 text-fona-red"></i>
+              </div>
+              <div>
+                <h4 class="font-semibold text-fona-navy">Crecimiento continuo</h4>
+                <p class="text-sm text-fona-navy/60">Cada año sumamos más convenios y mejoramos las tasas para nuestros afiliados.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="relative reveal-on-scroll">
+          <div class="relative rounded-[2rem] overflow-hidden shadow-2xl shadow-fona-blue/20 border border-fona-blue/10">
+            <div class="bg-gradient-to-br from-fona-blue to-fona-navy p-8 sm:p-10 text-white relative overflow-hidden">
+              <div class="absolute -top-20 -right-20 w-64 h-64 bg-white/10 rounded-full"></div>
+              <div class="absolute -bottom-24 -left-16 w-64 h-64 bg-fona-red/30 rounded-full"></div>
+              <div class="relative">
+                <img src="./images/logo.png" alt="FONAVANZAR" class="h-14 w-auto brightness-0 invert mb-6" />
+                <blockquote class="font-display text-2xl sm:text-3xl font-bold leading-snug mb-6">
+                  "Más que un fondo somos una gran familia"
+                </blockquote>
+                <p class="text-white/80">— Eslogan institucional FONAVANZAR</p>
+                <div class="flex gap-3 mt-8">
+                  <span class="px-4 py-2 rounded-full bg-white/15 text-sm font-medium">Transparencia</span>
+                  <span class="px-4 py-2 rounded-full bg-white/15 text-sm font-medium">Solidaridad</span>
+                  <span class="px-4 py-2 rounded-full bg-white/15 text-sm font-medium">Bienestar</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section id="servicios" class="relative z-10 py-24 lg:py-32 bg-white border-y border-fona-blue/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-16 reveal-on-scroll">
+        <span class="text-fona-red font-semibold text-sm uppercase tracking-wider">Nuestros servicios</span>
+        <h2 class="font-display font-black text-3xl sm:text-4xl lg:text-5xl mt-4 mb-6">
+          Todo lo que tu <span class="text-transparent bg-clip-text bg-gradient-to-r from-fona-blue to-fona-red">dinero necesita</span>
+        </h2>
+        <p class="text-fona-navy/70 text-lg">
+          Soluciones financieras y de bienestar diseñadas para ti y tu familia.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+        <!-- Service 1 -->
+        <div class="service-card-light group reveal-on-scroll">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-fona-blue to-fona-blue2 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+            <i data-lucide="piggy-bank" class="w-7 h-7 text-white"></i>
+          </div>
+          <h3 class="font-display font-bold text-xl mb-3 text-fona-navy">Ahorro Obligatorio y Voluntario</h3>
+          <p class="text-fona-navy/60 text-sm leading-relaxed">
+            Tu ahorro crece mes a mes con excelentes rendimientos. Dispones de retiros parciales para metas específicas.
+          </p>
+        </div>
+
+        <!-- Service 2 -->
+        <div class="service-card-light group reveal-on-scroll">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-fona-red to-fona-red2 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+            <i data-lucide="banknote" class="w-7 h-7 text-white"></i>
+          </div>
+          <h3 class="font-display font-bold text-xl mb-3 text-fona-navy">Créditos de Libranza</h3>
+          <p class="text-fona-navy/60 text-sm leading-relaxed">
+            Descuento directo de nómina, sin codeudor y con las tasas más bajas del mercado. Respuesta en 24 horas.
+          </p>
+        </div>
+
+        <!-- Service 3 -->
+        <div class="service-card-light group reveal-on-scroll">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-fona-blue to-fona-navy flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+            <i data-lucide="home" class="w-7 h-7 text-white"></i>
+          </div>
+          <h3 class="font-display font-bold text-xl mb-3 text-fona-navy">Crédito de Vivienda</h3>
+          <p class="text-fona-navy/60 text-sm leading-relaxed">
+            Haz realidad el sueño de tu casa propia con plazos de hasta 120 meses y cuotas que caben en tu bolsillo.
+          </p>
+        </div>
+
+        <!-- Service 4 -->
+        <div class="service-card-light group reveal-on-scroll">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-fona-red2 to-fona-red flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+            <i data-lucide="utensils" class="w-7 h-7 text-white"></i>
+          </div>
+          <h3 class="font-display font-bold text-xl mb-3 text-fona-navy">Subsidio de Cafetería</h3>
+          <p class="text-fona-navy/60 text-sm leading-relaxed">
+            Recargas mensuales para tu bienestar alimenticio en los puntos de venta aliados de la organización.
+          </p>
+        </div>
+
+        <!-- Service 5 -->
+        <div class="service-card-light group reveal-on-scroll">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-fona-blue2 to-fona-blue flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+            <i data-lucide="plane" class="w-7 h-7 text-white"></i>
+          </div>
+          <h3 class="font-display font-bold text-xl mb-3 text-fona-navy">Turismo y Recreación</h3>
+          <p class="text-fona-navy/60 text-sm leading-relaxed">
+            Planes de paseos, vacaciones familiares y actividades recreativas con precios especiales para afiliados.
+          </p>
+        </div>
+
+        <!-- Service 6 -->
+        <div class="service-card-light group reveal-on-scroll">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-fona-navy to-fona-blue flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+            <i data-lucide="stethoscope" class="w-7 h-7 text-white"></i>
+          </div>
+          <h3 class="font-display font-bold text-xl mb-3 text-fona-navy">Salud y Bienestar</h3>
+          <p class="text-fona-navy/60 text-sm leading-relaxed">
+            Convenios en gimnasios, odontología, ópticas y medicina prepagada con descuentos exclusivos.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Credit Simulator (DIFFERENTIATOR) -->
+  <section id="simulador" class="relative z-10 py-24 lg:py-32">
+    <div class="absolute top-0 left-1/4 w-96 h-96 bg-fona-red/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-14 reveal-on-scroll">
+        <span class="text-fona-red font-semibold text-sm uppercase tracking-wider">Simulador en línea</span>
+        <h2 class="font-display font-black text-3xl sm:text-4xl lg:text-5xl mt-4 mb-6">
+          Calcula tu <span class="text-transparent bg-clip-text bg-gradient-to-r from-fona-blue to-fona-red">cuota al instante</span>
+        </h2>
+        <p class="text-fona-navy/70 text-lg">
+          Mueve los controles y conoce tu cuota mensual en tiempo real. Sin compromiso, sin filas.
+        </p>
+      </div>
+
+      <div class="grid lg:grid-cols-5 gap-8 reveal-on-scroll">
+        <!-- Controls -->
+        <div class="lg:col-span-3 bg-white rounded-3xl p-6 sm:p-8 shadow-xl shadow-fona-navy/10 border border-fona-blue/10 space-y-8">
+          <!-- Amount -->
+          <div>
+            <div class="flex justify-between items-center mb-3">
+              <label for="sim-amount" class="font-semibold text-fona-navy flex items-center gap-2">
+                <i data-lucide="banknote" class="w-5 h-5 text-fona-blue"></i>
+                ¿Cuánto necesitas?
+              </label>
+              <span id="sim-amount-label" class="font-display font-bold text-xl text-fona-blue">$10.000.000</span>
+            </div>
+            <input type="range" id="sim-amount" min="1000000" max="50000000" step="500000" value="10000000" class="slider w-full" />
+            <div class="flex justify-between text-xs text-fona-navy/50 mt-1">
+              <span>$1M</span>
+              <span>$50M</span>
+            </div>
+          </div>
+
+          <!-- Term -->
+          <div>
+            <div class="flex justify-between items-center mb-3">
+              <label for="sim-term" class="font-semibold text-fona-navy flex items-center gap-2">
+                <i data-lucide="calendar-clock" class="w-5 h-5 text-fona-blue"></i>
+                ¿A qué plazo?
+              </label>
+              <span id="sim-term-label" class="font-display font-bold text-xl text-fona-blue">24 meses</span>
+            </div>
+            <input type="range" id="sim-term" min="6" max="72" step="6" value="24" class="slider w-full" />
+            <div class="flex justify-between text-xs text-fona-navy/50 mt-1">
+              <span>6 meses</span>
+              <span>72 meses</span>
+            </div>
+          </div>
+
+          <!-- Rate -->
+          <div>
+            <div class="flex justify-between items-center mb-3">
+              <label for="sim-rate" class="font-semibold text-fona-navy flex items-center gap-2">
+                <i data-lucide="percent" class="w-5 h-5 text-fona-red"></i>
+                Tasa mensual (E.A.)
+              </label>
+              <span id="sim-rate-label" class="font-display font-bold text-xl text-fona-red">1.2%</span>
+            </div>
+            <input type="range" id="sim-rate" min="0.8" max="2.5" step="0.1" value="1.2" class="slider slider-red w-full" />
+            <div class="flex justify-between text-xs text-fona-navy/50 mt-1">
+              <span>0.8%</span>
+              <span>2.5%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Result -->
+        <div class="lg:col-span-2">
+          <div class="rounded-3xl p-8 text-white shadow-2xl shadow-fona-blue/30 bg-gradient-to-br from-fona-navy via-fona-blue to-fona-blue2 relative overflow-hidden h-full flex flex-col justify-between">
+            <div class="absolute -top-16 -right-16 w-56 h-56 bg-white/10 rounded-full"></div>
+            <div class="absolute -bottom-20 -left-10 w-56 h-56 bg-fona-red/30 rounded-full"></div>
+            <div class="relative">
+              <p class="text-white/70 text-sm uppercase tracking-widest mb-2">Tu cuota mensual estimada</p>
+              <p id="sim-result" class="font-display font-black text-4xl sm:text-5xl mb-6">$000.000</p>
+
+              <div class="space-y-3 border-t border-white/20 pt-5">
+                <div class="flex justify-between text-sm">
+                  <span class="text-white/70">Total a pagar</span>
+                  <span id="sim-total" class="font-semibold">$0</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                  <span class="text-white/70">Total intereses</span>
+                  <span id="sim-interest" class="font-semibold">$0</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                  <span class="text-white/70">Monto solicitado</span>
+                  <span id="sim-principal" class="font-semibold">$0</span>
+                </div>
+              </div>
+            </div>
+            <a href="#contacto" class="relative mt-8 w-full px-6 py-4 rounded-xl bg-white text-fona-blue font-bold text-center hover:bg-fona-light transition-colors flex items-center justify-center gap-2">
+              <span>Solicitar este crédito</span>
+              <i data-lucide="arrow-right" class="w-5 h-5"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <p class="text-center text-sm text-fona-navy/50 mt-6 reveal-on-scroll">
+        * Valores estimados con fines ilustrativos. Las condiciones finales dependen del estudio de crédito y políticas de la entidad.
+      </p>
+    </div>
+  </section>
+
+  <!-- Convenios Section -->
+  <section id="convenios" class="relative z-10 py-24 lg:py-32 bg-white border-y border-fona-blue/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-14 reveal-on-scroll">
+        <span class="text-fona-red font-semibold text-sm uppercase tracking-wider">Convenios y aliados</span>
+        <h2 class="font-display font-black text-3xl sm:text-4xl lg:text-5xl mt-4 mb-6">
+          Descuentos que <span class="text-transparent bg-clip-text bg-gradient-to-r from-fona-blue to-fona-red">sí se sienten</span>
+        </h2>
+        <p class="text-fona-navy/70 text-lg">
+          Presenta tu carnet de afiliado y accede a beneficios en estas categorías.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 reveal-on-scroll">
+        <div class="convenio-card group">
+          <div class="w-14 h-14 mx-auto rounded-2xl bg-fona-blue/10 flex items-center justify-center mb-3 group-hover:bg-fona-blue group-hover:scale-110 transition-all">
+            <i data-lucide="utensils-crossed" class="w-7 h-7 text-fona-blue group-hover:text-white transition-colors"></i>
+          </div>
+          <p class="font-semibold text-sm text-fona-navy text-center">Restaurantes</p>
+        </div>
+        <div class="convenio-card group">
+          <div class="w-14 h-14 mx-auto rounded-2xl bg-fona-red/10 flex items-center justify-center mb-3 group-hover:bg-fona-red group-hover:scale-110 transition-all">
+            <i data-lucide="dumbbell" class="w-7 h-7 text-fona-red group-hover:text-white transition-colors"></i>
+          </div>
+          <p class="font-semibold text-sm text-fona-navy text-center">Gimnasios</p>
+        </div>
+        <div class="convenio-card group">
+          <div class="w-14 h-14 mx-auto rounded-2xl bg-fona-blue/10 flex items-center justify-center mb-3 group-hover:bg-fona-blue group-hover:scale-110 transition-all">
+            <i data-lucide="graduation-cap" class="w-7 h-7 text-fona-blue group-hover:text-white transition-colors"></i>
+          </div>
+          <p class="font-semibold text-sm text-fona-navy text-center">Educación</p>
+        </div>
+        <div class="convenio-card group">
+          <div class="w-14 h-14 mx-auto rounded-2xl bg-fona-red/10 flex items-center justify-center mb-3 group-hover:bg-fona-red group-hover:scale-110 transition-all">
+            <i data-lucide="car" class="w-7 h-7 text-fona-red group-hover:text-white transition-colors"></i>
+          </div>
+          <p class="font-semibold text-sm text-fona-navy text-center">Movilidad</p>
+        </div>
+        <div class="convenio-card group">
+          <div class="w-14 h-14 mx-auto rounded-2xl bg-fona-blue/10 flex items-center justify-center mb-3 group-hover:bg-fona-blue group-hover:scale-110 transition-all">
+            <i data-lucide="shirt" class="w-7 h-7 text-fona-blue group-hover:text-white transition-colors"></i>
+          </div>
+          <p class="font-semibold text-sm text-fona-navy text-center">Moda</p>
+        </div>
+        <div class="convenio-card group">
+          <div class="w-14 h-14 mx-auto rounded-2xl bg-fona-red/10 flex items-center justify-center mb-3 group-hover:bg-fona-red group-hover:scale-110 transition-all">
+            <i data-lucide="heart-pulse" class="w-7 h-7 text-fona-red group-hover:text-white transition-colors"></i>
+          </div>
+          <p class="font-semibold text-sm text-fona-navy text-center">Salud</p>
+        </div>
+      </div>
+
+      <div class="mt-12 text-center reveal-on-scroll">
+        <a href="#contacto" class="group inline-flex items-center gap-2 font-semibold text-fona-blue hover:text-fona-red transition-colors">
+          <span>¿Quieres ser aliado comercial?</span>
+          <i data-lucide="arrow-right" class="w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why FONAVANZAR -->
+  <section class="relative z-10 py-24 lg:py-32">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-16 reveal-on-scroll">
+        <span class="text-fona-red font-semibold text-sm uppercase tracking-wider">Por qué FONAVANZAR</span>
+        <h2 class="font-display font-black text-3xl sm:text-4xl lg:text-5xl mt-4 mb-6">
+          Beneficios que <span class="text-transparent bg-clip-text bg-gradient-to-r from-fona-blue to-fona-red">marcan la diferencia</span>
+        </h2>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="feature-card-light reveal-on-scroll">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-fona-blue to-fona-blue2 flex items-center justify-center mb-5">
+            <i data-lucide="zap" class="w-7 h-7 text-white"></i>
+          </div>
+          <h3 class="font-display font-bold text-lg mb-2 text-fona-navy">Respuesta en 24h</h3>
+          <p class="text-fona-navy/60 text-sm">Tus solicitudes de crédito tienen respuesta garantizada en un día hábil.</p>
+        </div>
+
+        <div class="feature-card-light reveal-on-scroll">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-fona-red to-fona-red2 flex items-center justify-center mb-5">
+            <i data-lucide="shield-check" class="w-7 h-7 text-white"></i>
+          </div>
+          <h3 class="font-display font-bold text-lg mb-2 text-fona-navy">Sin codeudor</h3>
+          <p class="text-fona-navy/60 text-sm">Los créditos de libranza no requieren codeudor ni garantías adicionales.</p>
+        </div>
+
+        <div class="feature-card-light reveal-on-scroll">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-fona-navy to-fona-blue flex items-center justify-center mb-5">
+            <i data-lucide="smartphone" class="w-7 h-7 text-white"></i>
+          </div>
+          <h3 class="font-display font-bold text-lg mb-2 text-fona-navy">Todo desde el celular</h3>
+          <p class="text-fona-navy/60 text-sm">Consulta tu saldo, solicita créditos y descarga extractos desde cualquier lugar.</p>
+        </div>
+
+        <div class="feature-card-light reveal-on-scroll">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-fona-blue2 to-fona-red flex items-center justify-center mb-5">
+            <i data-lucide="users" class="w-7 h-7 text-white"></i>
+          </div>
+          <h3 class="font-display font-bold text-lg mb-2 text-fona-navy">Asamblea participativa</h3>
+          <p class="text-fona-navy/60 text-sm">Tu voz cuenta: participa en las decisiones del fondo y elige la junta directiva.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="relative z-10 py-24 overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-r from-fona-blue via-fona-blue2 to-fona-red"></div>
+    <div class="absolute inset-0 opacity-20" style="background-image:radial-gradient(circle at 20% 50%, rgba(255,255,255,0.4) 0%, transparent 40%),radial-gradient(circle at 80% 50%, rgba(255,255,255,0.3) 0%, transparent 40%)"></div>
+    <div class="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center reveal-on-scroll">
+      <h2 class="font-display font-black text-3xl sm:text-4xl lg:text-5xl mb-6 text-white">
+        ¿Listo para unirte a la familia?
+      </h2>
+      <p class="text-xl text-white/90 mb-10 max-w-2xl mx-auto">
+        Afíliate hoy y empieza a disfrutar de todos los beneficios de FONAVANZAR desde tu primera quincena.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="#contacto" class="px-8 py-4 rounded-full bg-white text-fona-blue font-bold hover:shadow-2xl transition-all hover:-translate-y-1 flex items-center justify-center gap-2">
+          <i data-lucide="user-plus" class="w-5 h-5"></i>
+          <span>Solicitar afiliación</span>
+        </a>
+        <a href="https://wa.me/573017925683" target="_blank" rel="noopener noreferrer" class="px-8 py-4 rounded-full bg-green-500 text-white font-bold hover:bg-green-600 transition-all hover:-translate-y-1 flex items-center justify-center gap-2">
+          <i data-lucide="message-circle" class="w-5 h-5"></i>
+          <span>Escríbenos por WhatsApp</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contacto" class="relative z-10 py-24 lg:py-32 bg-white border-t border-fona-blue/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-2 gap-16">
+        <div class="reveal-on-scroll">
+          <span class="text-fona-red font-semibold text-sm uppercase tracking-wider">Contacto</span>
+          <h2 class="font-display font-black text-3xl sm:text-4xl lg:text-5xl mt-4 mb-6">
+            Estamos <span class="text-transparent bg-clip-text bg-gradient-to-r from-fona-blue to-fona-red">para servirte</span>
+          </h2>
+          <p class="text-fona-navy/70 text-lg mb-8">
+            Déjanos tus datos y un asesor se comunicará contigo para agendar tu cita de afiliación o resolver tus dudas.
+          </p>
+
+          <div class="space-y-6">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl bg-fona-blue/10 flex items-center justify-center">
+                <i data-lucide="map-pin" class="w-6 h-6 text-fona-blue"></i>
+              </div>
+              <div>
+                <p class="text-sm text-fona-navy/60">Ubicación</p>
+                <p class="font-medium text-fona-navy">Barranquilla, Atlántico, Colombia</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl bg-fona-red/10 flex items-center justify-center">
+                <i data-lucide="phone" class="w-6 h-6 text-fona-red"></i>
+              </div>
+              <div>
+                <p class="text-sm text-fona-navy/60">Teléfono</p>
+                <p class="font-medium text-fona-navy">301 792 5683</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl bg-fona-blue/10 flex items-center justify-center">
+                <i data-lucide="mail" class="w-6 h-6 text-fona-blue"></i>
+              </div>
+              <div>
+                <p class="text-sm text-fona-navy/60">Correo</p>
+                <p class="font-medium text-fona-navy">servicioalafiliado@fonavanzar.com.co</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl bg-fona-red/10 flex items-center justify-center">
+                <i data-lucide="clock" class="w-6 h-6 text-fona-red"></i>
+              </div>
+              <div>
+                <p class="text-sm text-fona-navy/60">Horario de atención</p>
+                <p class="font-medium text-fona-navy">Lun a Jue: 7:30 a.m. – 1:00 p.m. y 1:20 p.m. – 5:15 p.m.</p>
+                <p class="font-medium text-fona-navy">Vie: 7:30 a.m. – 12:45 p.m.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="reveal-on-scroll">
+          <form id="contact-form" class="bg-fona-light rounded-3xl p-8 space-y-6 border border-fona-blue/10">
+            <div class="grid sm:grid-cols-2 gap-6">
+              <div>
+                <label for="nombre" class="block text-sm font-medium text-fona-navy mb-2">Nombre completo</label>
+                <input type="text" id="nombre" name="nombre" required class="w-full px-4 py-3 rounded-xl bg-white border border-fona-blue/20 text-fona-navy placeholder-fona-navy/40 focus:border-fona-blue focus:ring-2 focus:ring-fona-blue/20 outline-none transition-all" placeholder="Tu nombre" />
+              </div>
+              <div>
+                <label for="telefono" class="block text-sm font-medium text-fona-navy mb-2">Teléfono</label>
+                <input type="tel" id="telefono" name="telefono" required class="w-full px-4 py-3 rounded-xl bg-white border border-fona-blue/20 text-fona-navy placeholder-fona-navy/40 focus:border-fona-blue focus:ring-2 focus:ring-fona-blue/20 outline-none transition-all" placeholder="300 123 4567" />
+              </div>
+            </div>
+            <div>
+              <label for="email" class="block text-sm font-medium text-fona-navy mb-2">Correo electrónico</label>
+              <input type="email" id="email" name="email" required class="w-full px-4 py-3 rounded-xl bg-white border border-fona-blue/20 text-fona-navy placeholder-fona-navy/40 focus:border-fona-blue focus:ring-2 focus:ring-fona-blue/20 outline-none transition-all" placeholder="tu@email.com" />
+            </div>
+            <div>
+              <label for="servicio" class="block text-sm font-medium text-fona-navy mb-2">¿Qué te interesa?</label>
+              <select id="servicio" name="servicio" required class="w-full px-4 py-3 rounded-xl bg-white border border-fona-blue/20 text-fona-navy focus:border-fona-blue focus:ring-2 focus:ring-fona-blue/20 outline-none transition-all">
+                <option value="" class="bg-white">Selecciona una opción</option>
+                <option value="afiliacion" class="bg-white">Afiliación</option>
+                <option value="credito" class="bg-white">Solicitar un crédito</option>
+                <option value="ahorro" class="bg-white">Información de ahorro</option>
+                <option value="convenios" class="bg-white">Convenios y descuentos</option>
+                <option value="otro" class="bg-white">Otro</option>
+              </select>
+            </div>
+            <div>
+              <label for="mensaje" class="block text-sm font-medium text-fona-navy mb-2">Mensaje</label>
+              <textarea id="mensaje" name="mensaje" rows="4" class="w-full px-4 py-3 rounded-xl bg-white border border-fona-blue/20 text-fona-navy placeholder-fona-navy/40 focus:border-fona-blue focus:ring-2 focus:ring-fona-blue/20 outline-none transition-all resize-none" placeholder="Cuéntanos en qué podemos ayudarte"></textarea>
+            </div>
+            <button type="submit" class="w-full px-8 py-4 rounded-xl bg-gradient-to-r from-fona-blue to-fona-blue2 text-white font-bold hover:shadow-lg hover:shadow-fona-blue/30 transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2">
+              <span>Enviar solicitud</span>
+              <i data-lucide="send" class="w-5 h-5"></i>
+            </button>
+            <p id="form-message" class="text-center text-sm hidden"></p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="relative z-10 bg-fona-navy text-white py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid md:grid-cols-4 gap-8 mb-12">
+        <div class="md:col-span-2">
+          <a href="#" class="inline-block mb-4 bg-white/95 rounded-xl p-3">
+            <img src="./images/logo.png" alt="FONAVANZAR" class="h-12 w-auto" />
+          </a>
+          <p class="text-white/60 text-sm max-w-sm">
+            Fondo de Empleados FONAVANZAR. Más que un fondo somos una gran familia. Ahorro, créditos y bienestar para nuestros afiliados.
+          </p>
+        </div>
+        <div>
+          <h4 class="font-display font-bold text-white mb-4">Servicios</h4>
+          <ul class="space-y-2 text-sm text-white/60">
+            <li><a href="#servicios" class="hover:text-white transition-colors">Ahorro</a></li>
+            <li><a href="#servicios" class="hover:text-white transition-colors">Créditos</a></li>
+            <li><a href="#servicios" class="hover:text-white transition-colors">Convenios</a></li>
+            <li><a href="#servicios" class="hover:text-white transition-colors">Bienestar</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-display font-bold text-white mb-4">Legal</h4>
+          <ul class="space-y-2 text-sm text-white/60">
+            <li><a href="#" class="hover:text-white transition-colors">Estatutos y reglamentos</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Política de privacidad</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Términos de uso</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+        <p class="text-sm text-white/50">© 2024 FONAVANZAR — Fondo de Empleados. Todos los derechos reservados.</p>
+        <div class="flex items-center gap-4">
+          <a href="#" aria-label="Facebook" class="social-icon-light w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-fona-blue transition-colors">
+            <svg class="w-5 h-5 fill-white" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </a>
+          <a href="#" aria-label="Instagram" class="social-icon-light w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-fona-red transition-colors">
+            <svg class="w-5 h-5 fill-white" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zm0 10.162a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+          </a>
+          <a href="#" aria-label="LinkedIn" class="social-icon-light w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-fona-blue2 transition-colors">
+            <svg class="w-5 h-5 fill-white" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124zM7.119 20.452H3.554V9h3.565v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="./js/main.js"></script>
+</body>
+</html>

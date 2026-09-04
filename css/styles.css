@@ -1,0 +1,236 @@
+/* ==========================================================================
+   FONAVANZAR — Fondo de Empleados
+   Hoja de estilos personalizada (complementa Tailwind)
+   Paleta: azul #0060B0 · navy #002060 · rojo #D00010 · celeste #2E86C1
+   ========================================================================== */
+
+/* ---------- Sistema base ---------- */
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 88px;
+    overflow-x: hidden;
+}
+
+body {
+    overflow-x: hidden;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: #F0F6FB;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Sora', 'Inter', system-ui, sans-serif;
+}
+
+img, video, canvas, svg {
+    max-width: 100%;
+    height: auto;
+}
+
+::selection {
+    background-color: #0060B0;
+    color: #ffffff;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+::-webkit-scrollbar-track {
+    background: #E4EDF6;
+}
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #0060B0, #2E86C1);
+    border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #002060, #0060B0);
+}
+
+/* ---------- Fondo dinámico: burbujas de ahorro ---------- */
+#bubbles-canvas {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+}
+
+/* ---------- Marquee / cinta de beneficios ---------- */
+.marquee {
+    overflow: hidden;
+}
+
+.marquee-track {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    animation: marquee-scroll 32s linear infinite;
+}
+
+.marquee:hover .marquee-track {
+    animation-play-state: paused;
+}
+
+@keyframes marquee-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+}
+
+.marquee-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0 1.8rem;
+    white-space: nowrap;
+}
+
+.marquee-dot-light {
+    width: 8px;
+    height: 8px;
+    border-radius: 9999px;
+    background: #ffffff;
+    opacity: 0.7;
+    flex-shrink: 0;
+}
+
+/* ---------- Tarjetas de vidrio (tema claro) ---------- */
+.glass-card-light {
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(0, 96, 176, 0.12);
+    box-shadow: 0 12px 40px -18px rgba(0, 32, 96, 0.25);
+}
+
+/* ---------- Tarjetas con elevación al pasar el mouse ---------- */
+.service-card-light,
+.feature-card-light,
+.convenio-card {
+    background: #ffffff;
+    border: 1px solid rgba(0, 96, 176, 0.10);
+    border-radius: 28px; /* cuadrado redondeado */
+    box-shadow: 0 8px 30px -18px rgba(0, 32, 96, 0.18);
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                border-color 0.35s ease;
+}
+
+.service-card-light,
+.feature-card-light {
+    padding: 28px;
+}
+
+.convenio-card {
+    padding: 24px 16px;
+}
+
+.service-card-light:hover,
+.feature-card-light:hover,
+.convenio-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(0, 96, 176, 0.35);
+    box-shadow: 0 24px 50px -18px rgba(0, 96, 176, 0.35);
+}
+
+/* ---------- Sliders (simulador de crédito) ---------- */
+.slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 9999px;
+    background: linear-gradient(90deg, #0060B0, #2E86C1);
+    outline: none;
+    cursor: pointer;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 9999px;
+    background: #ffffff;
+    border: 4px solid #0060B0;
+    box-shadow: 0 2px 10px rgba(0, 32, 96, 0.35);
+    transition: transform 0.15s ease;
+}
+
+.slider::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+}
+
+.slider::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    border-radius: 9999px;
+    background: #ffffff;
+    border: 4px solid #0060B0;
+    box-shadow: 0 2px 10px rgba(0, 32, 96, 0.35);
+    cursor: pointer;
+}
+
+.slider-red {
+    background: linear-gradient(90deg, #D00010, #E63946);
+}
+
+.slider-red::-webkit-slider-thumb {
+    border-color: #D00010;
+}
+
+.slider-red::-moz-range-thumb {
+    border-color: #D00010;
+}
+
+/* ---------- Animación de entrada al hacer scroll ---------- */
+.reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal-on-scroll.revealed {
+    opacity: 1;
+    transform: none;
+}
+
+/* ---------- Iconos sociales ---------- */
+.social-icon-light {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 9999px;
+    background: #ffffff;
+    border: 1px solid rgba(0, 96, 176, 0.18);
+    color: #0060B0;
+    box-shadow: 0 4px 14px -6px rgba(0, 32, 96, 0.25);
+    transition: transform 0.25s ease, background 0.25s ease, color 0.25s ease;
+}
+
+.social-icon-light:hover {
+    transform: translateY(-4px);
+    background: #0060B0;
+    color: #ffffff;
+}
+
+/* ---------- Utilidades defensivas ---------- */
+.break-words-safe {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+/* ---------- Accesibilidad: respeta usuarios con movimiento reducido ---------- */
+@media (prefers-reduced-motion: reduce) {
+    .marquee-track {
+        animation: none;
+    }
+    .reveal-on-scroll {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+    html {
+        scroll-behavior: auto;
+    }
+}
