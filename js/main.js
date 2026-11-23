@@ -39,10 +39,16 @@
 
         function pickChristmasType() {
             var r = Math.random();
-            if (r < 0.62) return 'snowflake';
-            if (r < 0.80) return 'star';
-            if (r < 0.92) return 'ornament';
-            return 'tree';
+            if (r < 0.48) return 'snowflake';
+            if (r < 0.60) return 'star';
+            if (r < 0.68) return 'ornament';
+            if (r < 0.75) return 'tree';
+            if (r < 0.81) return 'gift';
+            if (r < 0.87) return 'candyCane';
+            if (r < 0.92) return 'bell';
+            if (r < 0.96) return 'snowman';
+            if (r < 0.985) return 'santa';
+            return 'sleigh';
         }
 
         function randomFlake(initial) {
@@ -50,7 +56,7 @@
             var color;
             if (type === 'snowflake') {
                 color = Math.random() < 0.7 ? christmasPalette[1] : christmasPalette[0];
-            } else if (type === 'star') {
+            } else if (type === 'star' || type === 'bell') {
                 color = christmasPalette[4];
             } else if (type === 'tree') {
                 color = christmasPalette[3];
@@ -58,28 +64,50 @@
                 color = Math.random() < 0.6 ? christmasPalette[2] : christmasPalette[4];
             }
 
+            var isSleigh = type === 'sleigh';
+            var size = isSleigh
+                ? (22 + Math.random() * 12)
+                : (type === 'snowflake' ? (7 + Math.random() * 13) : (11 + Math.random() * 12));
+
             return {
-                x: Math.random() * canvas.width,
-                y: initial ? Math.random() * canvas.height : -30,
-                size: type === 'snowflake' ? (7 + Math.random() * 14) : (8 + Math.random() * 11),
-                speedY: 0.45 + Math.random() * 0.95,
-                driftX: (Math.random() - 0.5) * 0.35,
+                x: isSleigh
+                    ? (initial ? Math.random() * canvas.width : -60)
+                    : Math.random() * canvas.width,
+                y: initial
+                    ? Math.random() * canvas.height
+                    : (isSleigh ? (60 + Math.random() * (canvas.height * 0.75)) : -35),
+                size: size,
+                speedY: isSleigh ? (Math.random() - 0.5) * 0.25 : (0.45 + Math.random() * 0.95),
+                driftX: isSleigh ? (0.85 + Math.random() * 0.75) : ((Math.random() - 0.5) * 0.35),
                 rotation: Math.random() * Math.PI * 2,
                 rotSpeed: (Math.random() - 0.5) * 0.015,
                 wobble: Math.random() * Math.PI * 2,
                 wobbleSpeed: 0.01 + Math.random() * 0.02,
                 type: type,
                 color: color,
-                alpha: 0.22 + Math.random() * 0.28
+                alpha: isSleigh || type === 'santa' ? (0.30 + Math.random() * 0.20) : (0.22 + Math.random() * 0.26)
             };
         }
 
         function initFlakes() {
             var isMobile = window.innerWidth < 768;
-            var count = isMobile ? 35 : 65;
+            var count = isMobile ? 40 : 72;
             flakes = [];
             for (var i = 0; i < count; i++) {
                 flakes.push(randomFlake(true));
+            }
+            // Garantizar al menos un trineo y un Papá Noel visibles
+            if (!flakes.some(function (f) { return f.type === 'sleigh'; })) {
+                flakes[0].type = 'sleigh';
+                flakes[0].size = 28;
+                flakes[0].speedY = 0.1;
+                flakes[0].driftX = 1.1;
+                flakes[0].alpha = 0.38;
+            }
+            if (!flakes.some(function (f) { return f.type === 'santa'; })) {
+                flakes[1].type = 'santa';
+                flakes[1].size = 18;
+                flakes[1].alpha = 0.38;
             }
         }
 
@@ -159,32 +187,182 @@
             ctx.fillRect(-r * 0.14, r * 0.55, r * 0.28, r * 0.28);
         }
 
+        function drawGift(f) {
+            var r = f.size * 0.78;
+            ctx.fillStyle = 'rgba(208, 0, 16, ' + f.alpha + ')';
+            ctx.fillRect(-r, -r * 0.7, r * 2, r * 1.5);
+            // cinta dorada vertical y horizontal
+            ctx.fillStyle = 'rgba(217, 119, 6, ' + Math.min(1, f.alpha * 1.35) + ')';
+            ctx.fillRect(-r * 0.18, -r * 0.7, r * 0.36, r * 1.5);
+            ctx.fillRect(-r, -r * 0.15, r * 2, r * 0.32);
+            // moño superior
+            ctx.beginPath();
+            ctx.ellipse(-r * 0.32, -r * 0.88, r * 0.32, r * 0.18, -0.35, 0, Math.PI * 2);
+            ctx.ellipse(r * 0.32, -r * 0.88, r * 0.32, r * 0.18, 0.35, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function drawCandyCane(f) {
+            var r = f.size;
+            ctx.lineCap = 'round';
+            ctx.lineWidth = Math.max(2.5, r * 0.24);
+            ctx.strokeStyle = 'rgba(208, 0, 16, ' + f.alpha + ')';
+            ctx.beginPath();
+            ctx.moveTo(r * 0.25, r * 0.85);
+            ctx.lineTo(r * 0.25, -r * 0.35);
+            ctx.arc(-r * 0.12, -r * 0.35, r * 0.37, 0, Math.PI, true);
+            ctx.stroke();
+
+            ctx.setLineDash([r * 0.22, r * 0.22]);
+            ctx.strokeStyle = 'rgba(255, 255, 255, ' + Math.min(1, f.alpha * 1.6) + ')';
+            ctx.beginPath();
+            ctx.moveTo(r * 0.25, r * 0.85);
+            ctx.lineTo(r * 0.25, -r * 0.35);
+            ctx.arc(-r * 0.12, -r * 0.35, r * 0.37, 0, Math.PI, true);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        function drawBell(f) {
+            var r = f.size * 0.85;
+            ctx.fillStyle = 'rgba(217, 119, 6, ' + f.alpha + ')';
+            ctx.beginPath();
+            ctx.moveTo(-r * 0.72, r * 0.45);
+            ctx.quadraticCurveTo(-r * 0.6, -r * 0.65, 0, -r * 0.75);
+            ctx.quadraticCurveTo(r * 0.6, -r * 0.65, r * 0.72, r * 0.45);
+            ctx.closePath();
+            ctx.fill();
+            // badajo
+            ctx.beginPath();
+            ctx.arc(0, r * 0.58, r * 0.18, 0, Math.PI * 2);
+            ctx.fill();
+            // lazo rojo arriba
+            ctx.fillStyle = 'rgba(208, 0, 16, ' + Math.min(1, f.alpha * 1.25) + ')';
+            ctx.beginPath();
+            ctx.arc(0, -r * 0.78, r * 0.2, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function drawSnowman(f) {
+            var r = f.size;
+            var white = 'rgba(255, 255, 255, ' + Math.min(0.9, f.alpha * 2.1) + ')';
+            var border = 'rgba(0, 96, 176, ' + f.alpha + ')';
+            // cuerpo y cabeza
+            ctx.fillStyle = white;
+            ctx.strokeStyle = border;
+            ctx.lineWidth = 1.2;
+            ctx.beginPath();
+            ctx.arc(0, r * 0.35, r * 0.52, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(0, -r * 0.28, r * 0.35, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+            // bufanda roja
+            ctx.fillStyle = 'rgba(208, 0, 16, ' + Math.min(1, f.alpha * 1.4) + ')';
+            ctx.fillRect(-r * 0.32, -r * 0.02, r * 0.64, r * 0.16);
+            // sombrero
+            ctx.fillStyle = 'rgba(10, 26, 60, ' + Math.min(1, f.alpha * 1.5) + ')';
+            ctx.fillRect(-r * 0.42, -r * 0.62, r * 0.84, r * 0.1);
+            ctx.fillRect(-r * 0.26, -r * 0.96, r * 0.52, r * 0.34);
+        }
+
+        function drawSanta(f) {
+            var r = f.size;
+            // cara
+            ctx.fillStyle = 'rgba(255, 214, 186, ' + Math.min(0.95, f.alpha * 2) + ')';
+            ctx.beginPath();
+            ctx.arc(0, 0, r * 0.46, 0, Math.PI * 2);
+            ctx.fill();
+            // barba blanca
+            ctx.fillStyle = 'rgba(255, 255, 255, ' + Math.min(0.95, f.alpha * 2.2) + ')';
+            ctx.beginPath();
+            ctx.arc(0, r * 0.18, r * 0.48, 0, Math.PI);
+            ctx.fill();
+            // gorro rojo
+            ctx.fillStyle = 'rgba(208, 0, 16, ' + Math.min(1, f.alpha * 1.5) + ')';
+            ctx.beginPath();
+            ctx.moveTo(-r * 0.48, -r * 0.14);
+            ctx.quadraticCurveTo(0, -r * 1.05, r * 0.62, -r * 0.55);
+            ctx.lineTo(r * 0.42, -r * 0.14);
+            ctx.closePath();
+            ctx.fill();
+            // borde blanco y pompón
+            ctx.fillStyle = 'rgba(255, 255, 255, ' + Math.min(0.95, f.alpha * 2.2) + ')';
+            ctx.fillRect(-r * 0.5, -r * 0.2, r * 0.96, r * 0.16);
+            ctx.beginPath();
+            ctx.arc(r * 0.62, -r * 0.55, r * 0.14, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function drawSleigh(f) {
+            var r = f.size;
+            // patines dorados
+            ctx.strokeStyle = 'rgba(217, 119, 6, ' + Math.min(1, f.alpha * 1.5) + ')';
+            ctx.lineWidth = Math.max(2, r * 0.09);
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(-r * 0.95, r * 0.42);
+            ctx.lineTo(r * 0.72, r * 0.42);
+            ctx.quadraticCurveTo(r * 1.05, r * 0.42, r * 1.08, r * 0.08);
+            ctx.stroke();
+            // cuerpo del trineo rojo
+            ctx.fillStyle = 'rgba(208, 0, 16, ' + Math.min(1, f.alpha * 1.45) + ')';
+            ctx.beginPath();
+            ctx.moveTo(-r * 0.85, -r * 0.28);
+            ctx.quadraticCurveTo(-r * 0.65, r * 0.34, 0, r * 0.32);
+            ctx.lineTo(r * 0.75, r * 0.32);
+            ctx.quadraticCurveTo(r * 0.92, r * 0.05, r * 0.72, -r * 0.05);
+            ctx.lineTo(r * 0.1, -r * 0.05);
+            ctx.lineTo(-r * 0.35, -r * 0.38);
+            ctx.closePath();
+            ctx.fill();
+            // regalito + gorrito dentro del trineo
+            ctx.fillStyle = 'rgba(22, 128, 68, ' + Math.min(1, f.alpha * 1.4) + ')';
+            ctx.fillRect(-r * 0.52, -r * 0.42, r * 0.38, r * 0.32);
+            ctx.fillStyle = 'rgba(217, 119, 6, ' + Math.min(1, f.alpha * 1.5) + ')';
+            ctx.fillRect(-r * 0.36, -r * 0.42, r * 0.08, r * 0.32);
+        }
+
         function renderChristmasFrame(animate) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             for (var i = 0; i < flakes.length; i++) {
                 var f = flakes[i];
                 if (animate) {
                     f.wobble += f.wobbleSpeed;
-                    f.y += f.speedY;
-                    f.x += f.driftX + Math.sin(f.wobble) * 0.45;
+                    f.y += f.type === 'sleigh' ? Math.sin(f.wobble) * 0.35 + f.speedY : f.speedY;
+                    f.x += f.driftX + (f.type === 'sleigh' ? 0 : Math.sin(f.wobble) * 0.45);
                     f.rotation += f.rotSpeed;
 
-                    if (f.y - f.size > canvas.height + 20) {
+                    if (f.type === 'sleigh') {
+                        if (f.x - f.size > canvas.width + 60) {
+                            flakes[i] = randomFlake(false);
+                            continue;
+                        }
+                    } else if (f.y - f.size > canvas.height + 20) {
                         flakes[i] = randomFlake(false);
                         continue;
                     }
-                    if (f.x < -30) f.x = canvas.width + 30;
-                    if (f.x > canvas.width + 30) f.x = -30;
+                    if (f.x < -70) f.x = canvas.width + 50;
+                    if (f.type !== 'sleigh' && f.x > canvas.width + 40) f.x = -30;
                 }
 
                 ctx.save();
                 ctx.translate(f.x, f.y);
-                ctx.rotate(f.type === 'tree' || f.type === 'ornament' ? Math.sin(f.wobble) * 0.14 : f.rotation);
+                var swayTypes = ['tree', 'ornament', 'gift', 'bell', 'snowman', 'santa', 'sleigh'];
+                ctx.rotate(swayTypes.indexOf(f.type) !== -1 ? Math.sin(f.wobble) * 0.12 : f.rotation);
 
                 if (f.type === 'snowflake') drawSnowflake(f);
                 else if (f.type === 'star') drawStar(f);
                 else if (f.type === 'ornament') drawOrnament(f);
-                else drawTree(f);
+                else if (f.type === 'tree') drawTree(f);
+                else if (f.type === 'gift') drawGift(f);
+                else if (f.type === 'candyCane') drawCandyCane(f);
+                else if (f.type === 'bell') drawBell(f);
+                else if (f.type === 'snowman') drawSnowman(f);
+                else if (f.type === 'santa') drawSanta(f);
+                else drawSleigh(f);
 
                 ctx.restore();
             }
