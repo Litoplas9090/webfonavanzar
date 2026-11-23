@@ -7,7 +7,7 @@
 /* ---------- Sistema base ---------- */
 html {
     scroll-behavior: smooth;
-    scroll-padding-top: 88px;
+    scroll-padding-top: 112px;
     overflow-x: hidden;
 }
 
@@ -45,13 +45,14 @@ img, video, canvas, svg {
     background: linear-gradient(180deg, #002060, #0060B0);
 }
 
-/* ---------- Fondo dinámico: burbujas de ahorro ---------- */
-#bubbles-canvas {
+/* ---------- Fondo dinámico: copos y figuras de navidad ---------- */
+#christmas-canvas {
     position: fixed;
     inset: 0;
-    z-index: -1;
+    z-index: 0;
     width: 100%;
     height: 100%;
+    pointer-events: none;
 }
 
 /* ---------- Marquee / cinta de beneficios ---------- */

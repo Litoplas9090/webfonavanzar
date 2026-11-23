@@ -65,15 +65,15 @@
   <link rel="stylesheet" href="./css/styles.css" />
 </head>
 <body class="bg-fona-light text-fona-navy antialiased overflow-x-hidden">
-  <!-- Dynamic colorful background -->
-  <canvas id="bubbles-canvas" class="fixed inset-0 w-full h-full pointer-events-none z-0"></canvas>
+  <!-- Dynamic Christmas background -->
+  <canvas id="christmas-canvas" class="fixed inset-0 w-full h-full pointer-events-none z-0" aria-hidden="true"></canvas>
 
   <!-- Navigation -->
   <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white/80 backdrop-blur-xl border-b border-fona-blue/10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-20">
-        <a href="#" class="flex items-center gap-3 group">
-          <img src="./images/logo.png" alt="FONAVANZAR" class="h-12 w-auto group-hover:scale-105 transition-transform duration-300" />
+      <div class="flex items-center justify-between h-24 sm:h-28">
+        <a href="#" class="flex items-center gap-3 group shrink-0">
+          <img src="./images/logo.png" alt="FONAVANZAR" fetchpriority="high" class="h-16 sm:h-20 w-auto group-hover:scale-105 transition-transform duration-300" />
         </a>
 
         <div class="hidden lg:flex items-center gap-7">
@@ -114,107 +114,53 @@
   </nav>
 
   <!-- Hero Section -->
-  <section class="relative z-10 min-h-screen flex items-center pt-20">
+  <section class="relative z-10 min-h-screen flex items-center pt-28 sm:pt-32">
     <!-- Animated blobs -->
     <div class="absolute top-24 -left-24 w-96 h-96 bg-fona-blue/20 rounded-full blur-3xl animate-blob pointer-events-none"></div>
     <div class="absolute top-1/3 -right-24 w-96 h-96 bg-fona-red/15 rounded-full blur-3xl animate-blob pointer-events-none" style="animation-delay:-4s"></div>
     <div class="absolute bottom-10 left-1/3 w-72 h-72 bg-fona-blue2/20 rounded-full blur-3xl animate-blob pointer-events-none" style="animation-delay:-8s"></div>
 
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
-      <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-        <div class="space-y-8 reveal-on-scroll">
-          <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-fona-blue/10 border border-fona-blue/20 text-fona-blue text-xs sm:text-sm font-semibold max-w-full">
-            <span class="relative flex h-2 w-2 flex-shrink-0">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-fona-red opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-2 w-2 bg-fona-red"></span>
-            </span>
-            <span class="whitespace-normal">Fondo de Empleados — Tu gran familia</span>
-          </div>
-
-          <h1 class="font-display font-black text-4xl sm:text-5xl lg:text-6xl leading-[1.08]">
-            Más que un fondo, <span class="text-transparent bg-clip-text bg-gradient-to-r from-fona-blue via-fona-blue2 to-fona-red">somos una gran familia</span>
-          </h1>
-
-          <p class="text-lg sm:text-xl text-fona-navy/70 max-w-xl leading-relaxed">
-            En <strong class="text-fona-navy">FONAVANZAR</strong> cuidamos tu bienestar con <strong class="text-fona-navy">ahorro, créditos de libranza, convenios exclusivos</strong> y programas que hacen tu día a día más ligero.
-          </p>
-
-          <div class="flex flex-col sm:flex-row gap-4">
-            <a href="#simulador" class="group px-8 py-4 rounded-full bg-gradient-to-r from-fona-blue to-fona-blue2 text-white font-bold text-center hover:shadow-xl hover:shadow-fona-blue/30 transition-all hover:-translate-y-1 flex items-center justify-center gap-2">
-              <span>Simula tu crédito</span>
-              <i data-lucide="calculator" class="w-5 h-5 group-hover:rotate-6 transition-transform"></i>
-            </a>
-            <a href="#servicios" class="px-8 py-4 rounded-full border-2 border-fona-blue/30 text-fona-blue font-semibold text-center hover:bg-fona-blue/5 transition-all flex items-center justify-center gap-2">
-              <span>Conoce los beneficios</span>
-              <i data-lucide="chevron-down" class="w-5 h-5"></i>
-            </a>
-          </div>
-
-          <div class="flex flex-wrap items-center gap-6 pt-4">
-            <div class="flex items-center gap-2 text-sm text-fona-navy/60">
-              <i data-lucide="check-circle-2" class="w-5 h-5 text-fona-blue"></i>
-              <span>Afiliación sin costo</span>
-            </div>
-            <div class="flex items-center gap-2 text-sm text-fona-navy/60">
-              <i data-lucide="check-circle-2" class="w-5 h-5 text-fona-blue"></i>
-              <span>Respuesta en 24h</span>
-            </div>
-            <div class="flex items-center gap-2 text-sm text-fona-navy/60">
-              <i data-lucide="check-circle-2" class="w-5 h-5 text-fona-blue"></i>
-              <span>Descuentos exclusivos</span>
-            </div>
-          </div>
+    <div class="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 text-center">
+      <div class="space-y-8 reveal-on-scroll flex flex-col items-center">
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-fona-blue/10 border border-fona-blue/20 text-fona-blue text-xs sm:text-sm font-semibold max-w-full">
+          <span class="relative flex h-2 w-2 flex-shrink-0">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-fona-red opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-fona-red"></span>
+          </span>
+          <span class="whitespace-normal">Fondo de Empleados — Tu gran familia</span>
         </div>
 
-        <!-- Hero visual: credit card + floating elements -->
-        <div class="relative reveal-on-scroll lg:pl-8">
-          <div class="relative max-w-md mx-auto">
-            <!-- Credit card -->
-            <div class="relative rounded-3xl p-8 text-white shadow-2xl shadow-fona-blue/30 bg-gradient-to-br from-fona-navy via-fona-blue to-fona-blue2 rotate-2 hover:rotate-0 transition-transform duration-500 animate-float-slow overflow-hidden">
-              <div class="absolute -top-16 -right-16 w-56 h-56 bg-white/10 rounded-full"></div>
-              <div class="absolute -bottom-20 -left-10 w-56 h-56 bg-fona-red/30 rounded-full"></div>
-              <div class="relative">
-                <div class="flex justify-between items-start mb-8">
-                  <img src="./images/logo.png" alt="FONAVANZAR" class="h-10 w-auto brightness-0 invert" />
-                  <i data-lucide="wifi" class="w-7 h-7 rotate-90 opacity-80"></i>
-                </div>
-                <p class="font-mono text-xl tracking-[0.2em] mb-6">**** **** **** 2024</p>
-                <div class="flex justify-between items-end">
-                  <div>
-                    <p class="text-[10px] uppercase tracking-widest opacity-70">Afiliado</p>
-                    <p class="font-semibold">TU NOMBRE</p>
-                  </div>
-                  <div class="w-12 h-8 rounded bg-gradient-to-br from-fona-red2 to-fona-red flex items-center justify-center">
-                    <span class="text-[9px] font-bold">FNV</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+        <h1 class="font-display font-black text-4xl sm:text-5xl lg:text-6xl leading-[1.08] max-w-4xl">
+          Más que un fondo, <span class="text-transparent bg-clip-text bg-gradient-to-r from-fona-blue via-fona-blue2 to-fona-red">somos una gran familia</span>
+        </h1>
 
-            <!-- Floating badges -->
-            <div class="absolute -top-6 -right-2 glass-card-light rounded-2xl p-4 animate-float shadow-xl shadow-fona-navy/10">
-              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-fona-blue/15 flex items-center justify-center">
-                  <i data-lucide="piggy-bank" class="w-5 h-5 text-fona-blue"></i>
-                </div>
-                <div>
-                  <p class="text-xs text-fona-navy/60">Tu ahorro crece</p>
-                  <p class="font-display font-bold text-fona-navy">cada mes</p>
-                </div>
-              </div>
-            </div>
+        <p class="text-lg sm:text-xl text-fona-navy/70 max-w-2xl leading-relaxed">
+          En <strong class="text-fona-navy">FONAVANZAR</strong> cuidamos tu bienestar con <strong class="text-fona-navy">ahorro, créditos de libranza, convenios exclusivos</strong> y programas que hacen tu día a día más ligero.
+        </p>
 
-            <div class="absolute -bottom-6 -left-2 glass-card-light rounded-2xl p-4 animate-float shadow-xl shadow-fona-navy/10" style="animation-delay:-3s">
-              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-fona-red/15 flex items-center justify-center">
-                  <i data-lucide="percent" class="w-5 h-5 text-fona-red"></i>
-                </div>
-                <div>
-                  <p class="text-xs text-fona-navy/60">Créditos con</p>
-                  <p class="font-display font-bold text-fona-navy">tasas preferentes</p>
-                </div>
-              </div>
-            </div>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="#simulador" class="group px-8 py-4 rounded-full bg-gradient-to-r from-fona-blue to-fona-blue2 text-white font-bold text-center hover:shadow-xl hover:shadow-fona-blue/30 transition-all hover:-translate-y-1 flex items-center justify-center gap-2">
+            <span>Simula tu crédito</span>
+            <i data-lucide="calculator" class="w-5 h-5 group-hover:rotate-6 transition-transform"></i>
+          </a>
+          <a href="#servicios" class="px-8 py-4 rounded-full border-2 border-fona-blue/30 text-fona-blue font-semibold text-center hover:bg-fona-blue/5 transition-all flex items-center justify-center gap-2">
+            <span>Conoce los beneficios</span>
+            <i data-lucide="chevron-down" class="w-5 h-5"></i>
+          </a>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-center gap-6 pt-4">
+          <div class="flex items-center gap-2 text-sm text-fona-navy/60">
+            <i data-lucide="check-circle-2" class="w-5 h-5 text-fona-blue"></i>
+            <span>Afiliación sin costo</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm text-fona-navy/60">
+            <i data-lucide="check-circle-2" class="w-5 h-5 text-fona-blue"></i>
+            <span>Respuesta en 24h</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm text-fona-navy/60">
+            <i data-lucide="check-circle-2" class="w-5 h-5 text-fona-blue"></i>
+            <span>Descuentos exclusivos</span>
           </div>
         </div>
       </div>

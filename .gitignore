@@ -1,0 +1,21 @@
+# OS / Editor
+Thumbs.db
+.DS_Store
+desktop.ini
+*.swp
+*.swo
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Temporales
+*.tmp
+*.bak
+*.log
+~$*
+
+# Archivos de previsualización local (no necesarios en el repo)
+_preview_*
+preview*.png
+preview*.jpg

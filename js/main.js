@@ -17,16 +17,19 @@
         lucide.createIcons();
     }
 
-    /* ---------- Fondo dinámico: burbujas ---------- */
-    var canvas = document.getElementById('bubbles-canvas');
+    /* ---------- Fondo dinámico: copos y figuras de navidad ---------- */
+    var canvas = document.getElementById('christmas-canvas');
     if (canvas && canvas.getContext) {
         var ctx = canvas.getContext('2d');
-        var bubbles = [];
-        var palette = [
-            { r: 0, g: 96, b: 176 },   // azul fona
-            { r: 46, g: 134, b: 193 }, // celeste
-            { r: 208, g: 0, b: 16 },   // rojo fona
-            { r: 0, g: 32, b: 96 }     // navy
+        var flakes = [];
+        var animFrameId = null;
+        var reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+        var christmasPalette = [
+            { r: 0, g: 96, b: 176 },   // azul fona (copos invernales)
+            { r: 46, g: 134, b: 193 }, // celeste hielo
+            { r: 208, g: 0, b: 16 },   // rojo navideño fona
+            { r: 22, g: 128, b: 68 },  // verde pino
+            { r: 217, g: 119, b: 6 }   // dorado estrella
         ];
 
         function resizeCanvas() {
@@ -34,73 +37,192 @@
             canvas.height = window.innerHeight;
         }
 
-        function randomBubble(initial) {
-            var color = palette[Math.floor(Math.random() * palette.length)];
+        function pickChristmasType() {
+            var r = Math.random();
+            if (r < 0.62) return 'snowflake';
+            if (r < 0.80) return 'star';
+            if (r < 0.92) return 'ornament';
+            return 'tree';
+        }
+
+        function randomFlake(initial) {
+            var type = pickChristmasType();
+            var color;
+            if (type === 'snowflake') {
+                color = Math.random() < 0.7 ? christmasPalette[1] : christmasPalette[0];
+            } else if (type === 'star') {
+                color = christmasPalette[4];
+            } else if (type === 'tree') {
+                color = christmasPalette[3];
+            } else {
+                color = Math.random() < 0.6 ? christmasPalette[2] : christmasPalette[4];
+            }
+
             return {
                 x: Math.random() * canvas.width,
-                y: initial ? Math.random() * canvas.height : canvas.height + 40,
-                radius: 8 + Math.random() * 46,
-                speedY: 0.15 + Math.random() * 0.45,
-                driftX: (Math.random() - 0.5) * 0.3,
-                color: color,
-                alpha: 0.05 + Math.random() * 0.10,
+                y: initial ? Math.random() * canvas.height : -30,
+                size: type === 'snowflake' ? (7 + Math.random() * 14) : (8 + Math.random() * 11),
+                speedY: 0.45 + Math.random() * 0.95,
+                driftX: (Math.random() - 0.5) * 0.35,
+                rotation: Math.random() * Math.PI * 2,
+                rotSpeed: (Math.random() - 0.5) * 0.015,
                 wobble: Math.random() * Math.PI * 2,
-                wobbleSpeed: 0.004 + Math.random() * 0.008
+                wobbleSpeed: 0.01 + Math.random() * 0.02,
+                type: type,
+                color: color,
+                alpha: 0.22 + Math.random() * 0.28
             };
         }
 
-        function initBubbles() {
+        function initFlakes() {
             var isMobile = window.innerWidth < 768;
-            var count = isMobile ? 30 : 55;
-            bubbles = [];
+            var count = isMobile ? 35 : 65;
+            flakes = [];
             for (var i = 0; i < count; i++) {
-                bubbles.push(randomBubble(true));
+                flakes.push(randomFlake(true));
             }
         }
 
-        function drawBubbles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            for (var i = 0; i < bubbles.length; i++) {
-                var b = bubbles[i];
-                b.wobble += b.wobbleSpeed;
-                b.y -= b.speedY;
-                b.x += b.driftX + Math.sin(b.wobble) * 0.3;
-
-                if (b.y + b.radius < -20) {
-                    bubbles[i] = randomBubble(false);
-                    continue;
-                }
-                if (b.x - b.radius < -20) b.x = canvas.width + b.radius;
-                if (b.x + b.radius > canvas.width + 20) b.x = -b.radius;
-
-                var gradient = ctx.createRadialGradient(
-                    b.x - b.radius * 0.3, b.y - b.radius * 0.3, b.radius * 0.1,
-                    b.x, b.y, b.radius
-                );
-                gradient.addColorStop(0, 'rgba(' + b.color.r + ',' + b.color.g + ',' + b.color.b + ',' + (b.alpha * 1.8) + ')');
-                gradient.addColorStop(1, 'rgba(' + b.color.r + ',' + b.color.g + ',' + b.color.b + ',' + b.alpha + ')');
-
+        function drawSnowflake(f) {
+            var r = f.size;
+            ctx.strokeStyle = 'rgba(' + f.color.r + ',' + f.color.g + ',' + f.color.b + ',' + f.alpha + ')';
+            ctx.lineWidth = Math.max(1.2, r * 0.11);
+            ctx.lineCap = 'round';
+            for (var i = 0; i < 6; i++) {
+                ctx.save();
+                ctx.rotate((Math.PI / 3) * i);
                 ctx.beginPath();
-                ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
-                ctx.fillStyle = gradient;
-                ctx.fill();
-
-                // brillo superior para efecto burbuja
-                ctx.beginPath();
-                ctx.arc(b.x - b.radius * 0.35, b.y - b.radius * 0.4, b.radius * 0.18, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(255,255,255,' + (b.alpha * 2.4) + ')';
-                ctx.fill();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(0, -r);
+                // ramitas laterales del copo
+                ctx.moveTo(0, -r * 0.55);
+                ctx.lineTo(-r * 0.24, -r * 0.76);
+                ctx.moveTo(0, -r * 0.55);
+                ctx.lineTo(r * 0.24, -r * 0.76);
+                ctx.stroke();
+                ctx.restore();
             }
-            requestAnimationFrame(drawBubbles);
+        }
+
+        function drawStar(f) {
+            var r = f.size;
+            ctx.fillStyle = 'rgba(' + f.color.r + ',' + f.color.g + ',' + f.color.b + ',' + f.alpha + ')';
+            ctx.beginPath();
+            for (var i = 0; i < 8; i++) {
+                var radius = i % 2 === 0 ? r : r * 0.32;
+                var angle = (Math.PI / 4) * i;
+                var px = Math.cos(angle) * radius;
+                var py = Math.sin(angle) * radius;
+                if (i === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function drawOrnament(f) {
+            var r = f.size * 0.75;
+            var rgba = 'rgba(' + f.color.r + ',' + f.color.g + ',' + f.color.b + ',' + f.alpha + ')';
+            // capuchón
+            ctx.fillStyle = 'rgba(217, 119, 6, ' + f.alpha + ')';
+            ctx.fillRect(-r * 0.28, -r * 1.18, r * 0.56, r * 0.28);
+            // esfera
+            ctx.beginPath();
+            ctx.arc(0, 0, r, 0, Math.PI * 2);
+            ctx.fillStyle = rgba;
+            ctx.fill();
+            // brillo
+            ctx.beginPath();
+            ctx.arc(-r * 0.3, -r * 0.3, r * 0.22, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 255, 255, ' + (f.alpha * 1.3) + ')';
+            ctx.fill();
+        }
+
+        function drawTree(f) {
+            var r = f.size;
+            ctx.fillStyle = 'rgba(' + f.color.r + ',' + f.color.g + ',' + f.color.b + ',' + f.alpha + ')';
+            // copa superior
+            ctx.beginPath();
+            ctx.moveTo(0, -r);
+            ctx.lineTo(-r * 0.55, -r * 0.2);
+            ctx.lineTo(r * 0.55, -r * 0.2);
+            ctx.closePath();
+            ctx.fill();
+            // copa inferior
+            ctx.beginPath();
+            ctx.moveTo(0, -r * 0.45);
+            ctx.lineTo(-r * 0.78, r * 0.55);
+            ctx.lineTo(r * 0.78, r * 0.55);
+            ctx.closePath();
+            ctx.fill();
+            // tronco
+            ctx.fillRect(-r * 0.14, r * 0.55, r * 0.28, r * 0.28);
+        }
+
+        function renderChristmasFrame(animate) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (var i = 0; i < flakes.length; i++) {
+                var f = flakes[i];
+                if (animate) {
+                    f.wobble += f.wobbleSpeed;
+                    f.y += f.speedY;
+                    f.x += f.driftX + Math.sin(f.wobble) * 0.45;
+                    f.rotation += f.rotSpeed;
+
+                    if (f.y - f.size > canvas.height + 20) {
+                        flakes[i] = randomFlake(false);
+                        continue;
+                    }
+                    if (f.x < -30) f.x = canvas.width + 30;
+                    if (f.x > canvas.width + 30) f.x = -30;
+                }
+
+                ctx.save();
+                ctx.translate(f.x, f.y);
+                ctx.rotate(f.type === 'tree' || f.type === 'ornament' ? Math.sin(f.wobble) * 0.14 : f.rotation);
+
+                if (f.type === 'snowflake') drawSnowflake(f);
+                else if (f.type === 'star') drawStar(f);
+                else if (f.type === 'ornament') drawOrnament(f);
+                else drawTree(f);
+
+                ctx.restore();
+            }
+        }
+
+        function tickChristmas() {
+            if (document.hidden || reducedMotionQuery.matches) {
+                animFrameId = null;
+                return;
+            }
+            renderChristmasFrame(true);
+            animFrameId = requestAnimationFrame(tickChristmas);
+        }
+
+        function startChristmasCanvas() {
+            if (animFrameId) {
+                cancelAnimationFrame(animFrameId);
+                animFrameId = null;
+            }
+            if (reducedMotionQuery.matches) {
+                renderChristmasFrame(false);
+            } else if (!document.hidden) {
+                animFrameId = requestAnimationFrame(tickChristmas);
+            }
         }
 
         resizeCanvas();
-        initBubbles();
+        initFlakes();
         window.addEventListener('resize', function () {
             resizeCanvas();
-            initBubbles();
+            initFlakes();
+            if (reducedMotionQuery.matches) renderChristmasFrame(false);
         });
-        requestAnimationFrame(drawBubbles);
+        document.addEventListener('visibilitychange', startChristmasCanvas);
+        if (typeof reducedMotionQuery.addEventListener === 'function') {
+            reducedMotionQuery.addEventListener('change', startChristmasCanvas);
+        }
+        startChristmasCanvas();
     }
 
     /* ---------- Navbar: sombra al hacer scroll ---------- */
