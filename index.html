@@ -367,53 +367,82 @@
 
       <div class="grid lg:grid-cols-5 gap-8 reveal-on-scroll">
         <!-- Controls -->
-        <div class="lg:col-span-3 bg-white rounded-3xl p-6 sm:p-8 shadow-xl shadow-fona-navy/10 border border-fona-blue/10 space-y-8">
+        <div class="lg:col-span-3 bg-white rounded-3xl p-6 sm:p-8 shadow-xl shadow-fona-navy/10 border border-fona-blue/10 space-y-6">
+          <!-- Loan Line -->
+          <div>
+            <label for="sim-line" class="font-semibold text-fona-navy flex items-center gap-2 mb-2.5">
+              <i data-lucide="layers" class="w-5 h-5 text-fona-blue"></i>
+              Línea de crédito
+            </label>
+            <select id="sim-line" class="w-full px-4 py-3 rounded-xl bg-fona-light/70 border border-fona-blue/20 text-fona-navy font-medium focus:border-fona-blue focus:ring-2 focus:ring-fona-blue/20 outline-none transition-all">
+              <option value="libre-inversion">Libre Inversión (Hasta 60 meses · 1,2% M.V.)</option>
+              <option value="compra-cartera">Compra de Cartera (Hasta 60 meses · 1,2% M.V.)</option>
+              <option value="calamidad">Calamidad Doméstica (Hasta 24 meses · 1,2% M.V.)</option>
+              <option value="educativo">Educativo (Hasta 12 meses · 1,0% - 1,2% M.V.)</option>
+              <option value="convenios">Órdenes de Crédito y Convenios (Hasta 12 meses · 0,67% - 1,2% M.V.)</option>
+              <option value="eventos">Crédito Eventos (Hasta 12 meses · 0% interés)</option>
+              <option value="vivienda">Compra y Reparación de Vivienda (Hasta 60 meses · DTF+1)</option>
+            </select>
+            <p id="sim-line-note" class="text-xs text-fona-navy/60 mt-2">
+              Recursos de libre destinación sin necesidad de justificación o soporte. Cupo sujeto a 3x aportes y ahorros.
+            </p>
+          </div>
+
+          <!-- Payment Frequency -->
+          <div>
+            <span class="font-semibold text-fona-navy flex items-center gap-2 mb-2.5">
+              <i data-lucide="repeat" class="w-5 h-5 text-fona-blue"></i>
+              Periodicidad de pago (nómina)
+            </span>
+            <div class="grid grid-cols-2 gap-3" role="group" aria-label="Periodicidad de pago">
+              <button type="button" data-freq="mensual" aria-pressed="true" class="sim-freq-btn px-4 py-2.5 rounded-xl border-2 border-fona-blue bg-fona-blue text-white font-semibold text-sm transition-all">
+                Mensual
+              </button>
+              <button type="button" data-freq="quincenal" aria-pressed="false" class="sim-freq-btn px-4 py-2.5 rounded-xl border-2 border-fona-blue/20 bg-white text-fona-navy/80 font-semibold text-sm hover:border-fona-blue/50 transition-all">
+                Quincenal
+              </button>
+            </div>
+          </div>
+
           <!-- Amount -->
           <div>
-            <div class="flex justify-between items-center mb-3">
+            <div class="flex justify-between items-center mb-2.5">
               <label for="sim-amount" class="font-semibold text-fona-navy flex items-center gap-2">
                 <i data-lucide="banknote" class="w-5 h-5 text-fona-blue"></i>
                 ¿Cuánto necesitas?
               </label>
               <span id="sim-amount-label" class="font-display font-bold text-xl text-fona-blue">$10.000.000</span>
             </div>
-            <input type="range" id="sim-amount" min="1000000" max="50000000" step="500000" value="10000000" class="slider w-full" />
+            <input type="range" id="sim-amount" min="500000" max="50000000" step="500000" value="10000000" class="slider w-full" />
             <div class="flex justify-between text-xs text-fona-navy/50 mt-1">
-              <span>$1M</span>
-              <span>$50M</span>
+              <span>$500.000</span>
+              <span>$50.000.000</span>
             </div>
           </div>
 
           <!-- Term -->
           <div>
-            <div class="flex justify-between items-center mb-3">
+            <div class="flex justify-between items-center mb-2.5">
               <label for="sim-term" class="font-semibold text-fona-navy flex items-center gap-2">
                 <i data-lucide="calendar-clock" class="w-5 h-5 text-fona-blue"></i>
                 ¿A qué plazo?
               </label>
               <span id="sim-term-label" class="font-display font-bold text-xl text-fona-blue">24 meses</span>
             </div>
-            <input type="range" id="sim-term" min="6" max="72" step="6" value="24" class="slider w-full" />
+            <input type="range" id="sim-term" min="1" max="60" step="1" value="24" class="slider w-full" />
             <div class="flex justify-between text-xs text-fona-navy/50 mt-1">
-              <span>6 meses</span>
-              <span>72 meses</span>
+              <span>1 mes</span>
+              <span id="sim-term-max-label">Máx. 60 meses</span>
             </div>
           </div>
 
-          <!-- Rate -->
-          <div>
-            <div class="flex justify-between items-center mb-3">
-              <label for="sim-rate" class="font-semibold text-fona-navy flex items-center gap-2">
-                <i data-lucide="percent" class="w-5 h-5 text-fona-red"></i>
-                Tasa mensual (E.A.)
-              </label>
-              <span id="sim-rate-label" class="font-display font-bold text-xl text-fona-red">1.2%</span>
-            </div>
-            <input type="range" id="sim-rate" min="0.8" max="2.5" step="0.1" value="1.2" class="slider slider-red w-full" />
-            <div class="flex justify-between text-xs text-fona-navy/50 mt-1">
-              <span>0.8%</span>
-              <span>2.5%</span>
-            </div>
+          <!-- Fixed Rate Info -->
+          <div class="flex items-center justify-between px-4 py-3 rounded-2xl bg-fona-red/5 border border-fona-red/15">
+            <span class="font-semibold text-fona-navy text-sm flex items-center gap-2">
+              <i data-lucide="percent" class="w-4 h-4 text-fona-red"></i>
+              Tasa de la línea seleccionada
+            </span>
+            <span id="sim-rate-label" class="font-display font-bold text-lg text-fona-red">1,2% M.V.</span>
           </div>
         </div>
 
@@ -423,34 +452,69 @@
             <div class="absolute -top-16 -right-16 w-56 h-56 bg-white/10 rounded-full"></div>
             <div class="absolute -bottom-20 -left-10 w-56 h-56 bg-fona-red/30 rounded-full"></div>
             <div class="relative">
-              <p class="text-white/70 text-sm uppercase tracking-widest mb-2">Tu cuota mensual estimada</p>
-              <p id="sim-result" class="font-display font-black text-4xl sm:text-5xl mb-6">$000.000</p>
+              <p id="sim-result-title" class="text-white/75 text-sm uppercase tracking-widest mb-2">Tu cuota mensual estimada</p>
+              <p id="sim-result" class="font-display font-black text-4xl sm:text-5xl mb-6">$0</p>
 
               <div class="space-y-3 border-t border-white/20 pt-5">
-                <div class="flex justify-between text-sm">
+                <div class="flex justify-between text-sm gap-3">
+                  <span class="text-white/70">Línea</span>
+                  <span id="sim-summary-line" class="font-semibold text-right">Libre Inversión</span>
+                </div>
+                <div class="flex justify-between text-sm gap-3">
+                  <span class="text-white/70">Tasa aplicada</span>
+                  <span id="sim-summary-rate" class="font-semibold">1,2% M.V.</span>
+                </div>
+                <div class="flex justify-between text-sm gap-3">
                   <span class="text-white/70">Total a pagar</span>
                   <span id="sim-total" class="font-semibold">$0</span>
                 </div>
-                <div class="flex justify-between text-sm">
+                <div class="flex justify-between text-sm gap-3">
                   <span class="text-white/70">Total intereses</span>
                   <span id="sim-interest" class="font-semibold">$0</span>
                 </div>
-                <div class="flex justify-between text-sm">
+                <div class="flex justify-between text-sm gap-3">
                   <span class="text-white/70">Monto solicitado</span>
                   <span id="sim-principal" class="font-semibold">$0</span>
                 </div>
               </div>
             </div>
-            <a href="#contacto" class="relative mt-8 w-full px-6 py-4 rounded-xl bg-white text-fona-blue font-bold text-center hover:bg-fona-light transition-colors flex items-center justify-center gap-2">
-              <span>Solicitar este crédito</span>
-              <i data-lucide="arrow-right" class="w-5 h-5"></i>
+            <a id="sim-whatsapp-btn" href="https://wa.me/573017925683" target="_blank" rel="noopener noreferrer" class="relative mt-8 w-full px-6 py-4 rounded-xl bg-green-500 text-white font-bold text-center hover:bg-green-600 shadow-lg shadow-green-950/20 transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2">
+              <i data-lucide="message-circle" class="w-5 h-5"></i>
+              <span>Solicitar este crédito por WhatsApp</span>
             </a>
           </div>
         </div>
       </div>
 
+      <!-- Amortization Schedule (Offiplex style) -->
+      <details class="mt-8 bg-white rounded-3xl border border-fona-blue/10 shadow-lg shadow-fona-navy/5 overflow-hidden reveal-on-scroll">
+        <summary class="px-6 py-4 cursor-pointer font-display font-bold text-fona-navy flex items-center justify-between hover:bg-fona-light/50 transition-colors">
+          <span class="flex items-center gap-2">
+            <i data-lucide="table" class="w-5 h-5 text-fona-blue"></i>
+            Ver plan de amortización estimado (cuota a cuota)
+          </span>
+          <span class="text-xs font-sans font-semibold text-fona-blue uppercase tracking-wider">Desplegar</span>
+        </summary>
+        <div class="px-6 pb-6">
+          <div class="overflow-x-auto max-h-80 overflow-y-auto rounded-xl border border-fona-blue/10">
+            <table class="w-full text-sm text-left">
+              <thead class="bg-fona-light text-fona-navy/80 sticky top-0">
+                <tr>
+                  <th scope="col" class="px-4 py-3 font-semibold">Cuota</th>
+                  <th scope="col" class="px-4 py-3 font-semibold">Valor cuota</th>
+                  <th scope="col" class="px-4 py-3 font-semibold">Abono capital</th>
+                  <th scope="col" class="px-4 py-3 font-semibold">Interés</th>
+                  <th scope="col" class="px-4 py-3 font-semibold">Saldo</th>
+                </tr>
+              </thead>
+              <tbody id="sim-amortization-body" class="divide-y divide-fona-blue/10 text-fona-navy/80"></tbody>
+            </table>
+          </div>
+        </div>
+      </details>
+
       <p class="text-center text-sm text-fona-navy/50 mt-6 reveal-on-scroll">
-        * Valores estimados con fines ilustrativos. Las condiciones finales dependen del estudio de crédito y políticas de la entidad.
+        * Valores estimados con fines ilustrativos. Cupo máximo sujeto a 3x tus aportes y ahorros, descuento por libranza y estudio de crédito según normatividad vigente.
       </p>
     </div>
   </section>

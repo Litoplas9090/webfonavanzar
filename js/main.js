@@ -484,46 +484,193 @@
         counterEls.forEach(function (el) { counterObserver.observe(el); });
     }
 
-    /* ---------- Simulador de crédito ---------- */
+    /* ---------- Simulador de crédito (modelo por líneas tipo Offiplex + WhatsApp) ---------- */
+    var simLine = document.getElementById('sim-line');
     var simAmount = document.getElementById('sim-amount');
     var simTerm = document.getElementById('sim-term');
-    var simRate = document.getElementById('sim-rate');
 
-    if (simAmount && simTerm && simRate) {
+    if (simLine && simAmount && simTerm) {
+        var LOAN_LINES = {
+            'libre-inversion': {
+                name: 'Libre Inversión',
+                rate: 1.2,
+                rateText: '1,2% M.V.',
+                maxTerm: 60,
+                note: 'Recursos de libre destinación sin necesidad de justificación o soporte. Cupo sujeto a 3x aportes y ahorros.'
+            },
+            'compra-cartera': {
+                name: 'Compra de Cartera',
+                rate: 1.2,
+                rateText: '1,2% M.V.',
+                maxTerm: 60,
+                note: 'Unifica tus obligaciones con terceros para mejorar tu flujo de caja mensual.'
+            },
+            'calamidad': {
+                name: 'Calamidad Doméstica',
+                rate: 1.2,
+                rateText: '1,2% M.V.',
+                maxTerm: 24,
+                note: 'Atención prioritaria ante emergencias médicas, familiares o daños imprevistos.'
+            },
+            'educativo': {
+                name: 'Educativo',
+                rate: 1.0,
+                rateText: '1,0% M.V. (ref. 1,0% - 1,2%)',
+                maxTerm: 12,
+                note: 'Financiación de educación primaria, secundaria, superior o no formal para ti y tu familia.'
+            },
+            'convenios': {
+                name: 'Órdenes de Crédito y Convenios',
+                rate: 0.67,
+                rateText: '0,67% M.V. (ref. 0,67% - 1,2%)',
+                maxTerm: 12,
+                note: 'Autorizaciones para compra de artículos, salud, medicamentos y ferias con proveedores aliados.'
+            },
+            'eventos': {
+                name: 'Crédito Eventos',
+                rate: 0,
+                rateText: '0% interés',
+                maxTerm: 12,
+                note: 'Participación en actividades recreativas, deportivas, artísticas y culturales del Fondo.'
+            },
+            'vivienda': {
+                name: 'Compra y Reparación de Vivienda',
+                rate: 0.95,
+                rateText: 'DTF+1 (ref. ~0,95% M.V.)',
+                maxTerm: 60,
+                note: 'Compra de vivienda hasta 15 SMMLV (máx. 60 meses) o mejoras hasta 10 SMMLV (máx. 36 meses) con tasa DTF+1.'
+            }
+        };
+
+        var simFrequency = 'mensual';
+        var freqButtons = document.querySelectorAll('.sim-freq-btn');
         var labelAmount = document.getElementById('sim-amount-label');
         var labelTerm = document.getElementById('sim-term-label');
+        var labelTermMax = document.getElementById('sim-term-max-label');
         var labelRate = document.getElementById('sim-rate-label');
+        var lineNote = document.getElementById('sim-line-note');
+        var resultTitle = document.getElementById('sim-result-title');
         var outResult = document.getElementById('sim-result');
+        var outSummaryLine = document.getElementById('sim-summary-line');
+        var outSummaryRate = document.getElementById('sim-summary-rate');
         var outTotal = document.getElementById('sim-total');
         var outInterest = document.getElementById('sim-interest');
         var outPrincipal = document.getElementById('sim-principal');
+        var whatsappBtn = document.getElementById('sim-whatsapp-btn');
+        var amortizationBody = document.getElementById('sim-amortization-body');
 
         function formatCOP(value) {
             return '$' + Math.round(value).toLocaleString('es-CO');
         }
 
-        function updateSimulator() {
-            var P = parseFloat(simAmount.value);        // monto
-            var n = parseInt(simTerm.value, 10);        // plazo en meses
-            var monthlyRate = parseFloat(simRate.value); // tasa mensual %
-            var i = monthlyRate / 100;                  // tasa mensual decimal
+        function syncLineConstraints() {
+            var line = LOAN_LINES[simLine.value] || LOAN_LINES['libre-inversion'];
+            simTerm.max = String(line.maxTerm);
+            if (parseInt(simTerm.value, 10) > line.maxTerm) {
+                simTerm.value = String(line.maxTerm);
+            }
+            if (labelTermMax) labelTermMax.textContent = 'Máx. ' + line.maxTerm + ' meses';
+            if (labelRate) labelRate.textContent = line.rateText;
+            if (lineNote) lineNote.textContent = line.note;
+        }
 
-            var payment = P * i / (1 - Math.pow(1 + i, -n));
-            var total = payment * n;
+        function renderAmortization(P, periods, periodRate, payment) {
+            if (!amortizationBody) return;
+            var balance = P;
+            var rowsHtml = '';
+            for (var k = 1; k <= periods; k++) {
+                var interestPaid = balance * periodRate;
+                var principalPaid = k === periods ? balance : (payment - interestPaid);
+                var currentPayment = k === periods ? (principalPaid + interestPaid) : payment;
+                balance = Math.max(0, balance - principalPaid);
+                rowsHtml += '<tr>' +
+                    '<td class="px-4 py-2.5 font-medium">' + k + '</td>' +
+                    '<td class="px-4 py-2.5">' + formatCOP(currentPayment) + '</td>' +
+                    '<td class="px-4 py-2.5">' + formatCOP(principalPaid) + '</td>' +
+                    '<td class="px-4 py-2.5">' + formatCOP(interestPaid) + '</td>' +
+                    '<td class="px-4 py-2.5 font-medium">' + formatCOP(balance) + '</td>' +
+                    '</tr>';
+            }
+            amortizationBody.innerHTML = rowsHtml;
+        }
+
+        function updateSimulator() {
+            var line = LOAN_LINES[simLine.value] || LOAN_LINES['libre-inversion'];
+            var P = parseFloat(simAmount.value);
+            var months = parseInt(simTerm.value, 10);
+            var isQuincenal = simFrequency === 'quincenal';
+            var periods = isQuincenal ? months * 2 : months;
+            var periodRate = (line.rate / 100) / (isQuincenal ? 2 : 1);
+
+            var payment = periodRate === 0
+                ? (P / periods)
+                : (P * periodRate / (1 - Math.pow(1 + periodRate, -periods)));
+            var total = payment * periods;
             var interest = total - P;
 
             if (labelAmount) labelAmount.textContent = formatCOP(P);
-            if (labelTerm) labelTerm.textContent = n + ' meses';
-            if (labelRate) labelRate.textContent = monthlyRate.toFixed(1).replace('.', ',') + '% mensual';
+            if (labelTerm) {
+                labelTerm.textContent = months + (months === 1 ? ' mes' : ' meses') +
+                    (isQuincenal ? ' (' + periods + ' quincenas)' : '');
+            }
+            if (resultTitle) {
+                resultTitle.textContent = isQuincenal ? 'Tu cuota quincenal estimada' : 'Tu cuota mensual estimada';
+            }
             if (outResult) outResult.textContent = formatCOP(payment);
+            if (outSummaryLine) outSummaryLine.textContent = line.name;
+            if (outSummaryRate) outSummaryRate.textContent = line.rateText;
             if (outTotal) outTotal.textContent = formatCOP(total);
             if (outInterest) outInterest.textContent = formatCOP(interest);
             if (outPrincipal) outPrincipal.textContent = formatCOP(P);
+
+            renderAmortization(P, periods, periodRate, payment);
+
+            if (whatsappBtn) {
+                var msg = [
+                    'Hola, quiero solicitar un crédito con FONAVANZAR. Estos son los datos de mi simulación:',
+                    '',
+                    '• Línea de crédito: ' + line.name,
+                    '• Monto solicitado: ' + formatCOP(P),
+                    '• Plazo: ' + months + (months === 1 ? ' mes' : ' meses') + (isQuincenal ? ' (' + periods + ' quincenas)' : ''),
+                    '• Periodicidad: ' + (isQuincenal ? 'Quincenal' : 'Mensual'),
+                    '• Tasa referencial: ' + line.rateText,
+                    '• Cuota ' + (isQuincenal ? 'quincenal' : 'mensual') + ' estimada: ' + formatCOP(payment),
+                    '• Total intereses estimados: ' + formatCOP(interest),
+                    '• Total estimado a pagar: ' + formatCOP(total),
+                    '',
+                    'Por favor indíquenme los pasos para continuar con la solicitud.'
+                ].join('\n');
+                whatsappBtn.href = 'https://wa.me/573017925683?text=' + encodeURIComponent(msg);
+            }
         }
 
-        [simAmount, simTerm, simRate].forEach(function (input) {
+        freqButtons.forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                simFrequency = btn.getAttribute('data-freq') === 'quincenal' ? 'quincenal' : 'mensual';
+                freqButtons.forEach(function (b) {
+                    var active = b === btn;
+                    b.setAttribute('aria-pressed', String(active));
+                    if (active) {
+                        b.classList.add('border-fona-blue', 'bg-fona-blue', 'text-white');
+                        b.classList.remove('border-fona-blue/20', 'bg-white', 'text-fona-navy/80');
+                    } else {
+                        b.classList.remove('border-fona-blue', 'bg-fona-blue', 'text-white');
+                        b.classList.add('border-fona-blue/20', 'bg-white', 'text-fona-navy/80');
+                    }
+                });
+                updateSimulator();
+            });
+        });
+
+        simLine.addEventListener('change', function () {
+            syncLineConstraints();
+            updateSimulator();
+        });
+        [simAmount, simTerm].forEach(function (input) {
             input.addEventListener('input', updateSimulator);
         });
+
+        syncLineConstraints();
         updateSimulator();
     }
 
